@@ -8,6 +8,7 @@ import (
 	"github.com/openzipkin/zipkin-go/propagation/b3"
 	"github.com/openzipkin/zipkin-go/reporter/recorder"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/go-kit/kit/endpoint"
@@ -32,10 +33,10 @@ func TestGRPCClientTrace(t *testing.T) {
 
 	clientTracer := kitzipkin.GRPCClientTrace(tr)
 
-	cc, err := grpc.Dial(
+	cc, err := grpc.NewClient(
 		"",
 		grpc.WithUnaryInterceptor(unaryInterceptor),
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		t.Fatalf("unable to create gRPC dialer: %s", err.Error())
